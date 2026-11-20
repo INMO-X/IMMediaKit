@@ -1,0 +1,31 @@
+PODS:
+  - IMMediaKit/Editing (0.1.2):
+    - ZLImageEditor (= 3.0.0)
+  - ZLImageEditor (3.0.0):
+    - ZLImageEditor/Core (= 3.0.0)
+  - ZLImageEditor/Core (3.0.0)
+
+DEPENDENCIES:
+  - IMMediaKit/Editing (from `https://github.com/INMO-X/IMMediaKit.git`, tag `0.1.2`)
+
+SPEC REPOS:
+  trunk:
+    - ZLImageEditor
+
+EXTERNAL SOURCES:
+  IMMediaKit:
+    :git: https://github.com/INMO-X/IMMediaKit.git
+    :tag: 0.1.2
+
+CHECKOUT OPTIONS:
+  IMMediaKit:
+    :git: https://github.com/INMO-X/IMMediaKit.git
+    :tag: 0.1.2
+
+SPEC CHECKSUMS:
+  IMMediaKit: 8f26de635dd7eef0362963a527e79b1146e2eb6f
+  ZLImageEditor: 32582c98e0ab025cc8bcc61867f03f6470170bc0
+
+PODFILE CHECKSUM: 3b64949d63e7700e248f8d449edc3cac462ae454
+
+COCOAPODS: 1.16.2
