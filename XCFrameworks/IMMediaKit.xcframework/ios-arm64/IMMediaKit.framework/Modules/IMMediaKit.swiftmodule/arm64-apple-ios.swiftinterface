@@ -1,0 +1,264 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.4.2 effective-5.10 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)
+// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -language-mode 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name IMMediaKit
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4.2
+import AVFoundation
+import Combine
+import CoreImage
+import CoreServices
+import CryptoKit
+import Foundation
+@_exported import IMMediaKit
+import ImageIO
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os.log
+import os
+public struct IMImageRequest : Swift::Sendable {
+  public enum Priority : Swift::Int, Swift::Sendable {
+    case low, normal, high
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+  public let item: IMMediaKit::IMMediaItem
+  public let targetSize: CoreFoundation::CGSize
+  public let priority: IMMediaKit::IMImageRequest.IMMediaKit::Priority
+  public let allowDiskCache: Swift::Bool
+  public init(item: IMMediaKit::IMMediaItem, targetSize: CoreFoundation::CGSize, priority: IMMediaKit::IMImageRequest.IMMediaKit::Priority = .normal, allowDiskCache: Swift::Bool = true)
+}
+@_hasMissingDesignatedInitializers final public class IMImageRequestToken {
+  final public func cancel()
+  final public var isCancelled: Swift::Bool {
+    get
+  }
+  @objc deinit
+}
+public enum IMLocalImageStoreError : Swift::Error {
+  case userIDEmpty
+  case deviceIDEmpty
+  case writeFailed(underlying: any Swift::Error)
+  case directoryCreateFailed(underlying: any Swift::Error)
+}
+public enum IMLocalMediaKind : Swift::String {
+  case photo
+  case video
+  case audio
+  public init?(rawValue: Swift::String)
+  public typealias RawValue = Swift::String
+  public var rawValue: Swift::String {
+    get
+  }
+}
+final public class IMLocalImageStore {
+  final public let userID: Swift::String
+  final public let userRoot: Foundation::URL
+  public init(userID: Swift::String) throws
+  final public func directory(forDevice deviceID: Swift::String, kind: IMMediaKit::IMLocalMediaKind) throws -> Foundation::URL
+  final public func thumbnailsDirectory(forDevice deviceID: Swift::String) throws -> Foundation::URL
+  @discardableResult
+  final public func saveOriginal(data: Foundation::Data, fileName: Swift::String, deviceID: Swift::String, kind: IMMediaKit::IMLocalMediaKind) throws -> Foundation::URL
+  @discardableResult
+  final public func saveThumbnail(data: Foundation::Data, fileName: Swift::String, deviceID: Swift::String) throws -> Foundation::URL
+  final public func originalURL(fileName: Swift::String, deviceID: Swift::String, kind: IMMediaKit::IMLocalMediaKind) -> Foundation::URL?
+  final public func thumbnailURL(fileName: Swift::String, deviceID: Swift::String) -> Foundation::URL?
+  final public func listOriginals(deviceID: Swift::String, kind: IMMediaKit::IMLocalMediaKind) -> [Foundation::URL]
+  final public func listThumbnails(deviceID: Swift::String) -> [Foundation::URL]
+  @discardableResult
+  final public func removeThumbnail(fileName: Swift::String, deviceID: Swift::String) -> Swift::Bool
+  @discardableResult
+  final public func removeOriginal(fileName: Swift::String, deviceID: Swift::String, kind: IMMediaKit::IMLocalMediaKind) -> Swift::Bool
+  final public func clearDevice(_ deviceID: Swift::String)
+  final public func clearUser()
+  @objc deinit
+}
+public struct IMMediaConfiguration : Swift::Sendable {
+  public var mediaRoot: Foundation::URL
+  public var coverRoot: Foundation::URL
+  public var metadataURL: Foundation::URL
+  public var thumbnailCacheRoot: Foundation::URL
+  public var mediaDataRoot: Foundation::URL
+  public var memoryCacheByteLimit: Swift::Int
+  public var diskCacheByteLimit: Swift::Int
+  public var generateCoverSynchronously: Swift::Bool
+  public static func forUser(userID: Swift::String) -> IMMediaKit::IMMediaConfiguration
+  public static let `default`: IMMediaKit::IMMediaConfiguration
+  public init(mediaRoot: Foundation::URL, coverRoot: Foundation::URL, metadataURL: Foundation::URL, thumbnailCacheRoot: Foundation::URL, mediaDataRoot: Foundation::URL, memoryCacheByteLimit: Swift::Int = 64 * 1024 * 1024, diskCacheByteLimit: Swift::Int = 200 * 1024 * 1024, generateCoverSynchronously: Swift::Bool = false)
+}
+public enum IMMediaError : Swift::Error, Swift::Equatable, Swift::CustomStringConvertible, Swift::Sendable {
+  case notInitialized
+  case invalidConfiguration(reason: Swift::String)
+  case fileNotFound(path: Swift::String)
+  case itemNotFound(id: Swift::String)
+  case unsupportedMediaType(uti: Swift::String)
+  case storageWriteFailed(reason: Swift::String)
+  case storageReadFailed(reason: Swift::String)
+  case metadataCorrupted(reason: Swift::String)
+  case coverGenerationFailed(reason: Swift::String)
+  case imageDecodeFailed(reason: Swift::String)
+  case requestCancelled
+  case unknown(reason: Swift::String)
+  public var description: Swift::String {
+    get
+  }
+  public static func == (a: IMMediaKit::IMMediaError, b: IMMediaKit::IMMediaError) -> Swift::Bool
+}
+public enum IMMediaEvent : Swift::Sendable {
+  case inserted(item: IMMediaKit::IMMediaItem)
+  case batchInserted(items: [IMMediaKit::IMMediaItem])
+  case updated(item: IMMediaKit::IMMediaItem)
+  case deleted(id: Swift::String)
+  case batchDeleted(ids: [Swift::String])
+  case storeReloaded
+}
+@_hasMissingDesignatedInitializers final public class IMMediaEventToken {
+  @objc deinit
+  final public func invalidate()
+}
+public enum IMMediaType : Swift::String, Swift::Codable, Swift::Equatable, Swift::Sendable {
+  case image
+  case video
+  public init?(rawValue: Swift::String)
+  public typealias RawValue = Swift::String
+  public var rawValue: Swift::String {
+    get
+  }
+}
+public struct IMMediaItem : Swift::Codable, Swift::Equatable, Swift::Hashable, Swift::Identifiable, Swift::Sendable {
+  public let id: Swift::String
+  public let type: IMMediaKit::IMMediaType
+  public let localPath: Swift::String
+  public let coverPath: Swift::String?
+  public let createdAt: Foundation::Date
+  public let fileSize: Swift::Int64
+  public let width: Swift::Int?
+  public let height: Swift::Int?
+  public let source: Swift::String?
+  public let accelPath: Swift::String?
+  public let eisPath: Swift::String?
+  public let pendingProcess: Swift::Bool?
+  public let horizonCorrected: Swift::Bool?
+  public init(id: Swift::String, type: IMMediaKit::IMMediaType, localPath: Swift::String, coverPath: Swift::String? = nil, createdAt: Foundation::Date, fileSize: Swift::Int64, width: Swift::Int? = nil, height: Swift::Int? = nil, source: Swift::String? = nil, accelPath: Swift::String? = nil, eisPath: Swift::String? = nil, pendingProcess: Swift::Bool? = nil, horizonCorrected: Swift::Bool? = nil)
+  public static func == (a: IMMediaKit::IMMediaItem, b: IMMediaKit::IMMediaItem) -> Swift::Bool
+  public typealias ID = Swift::String
+  public func encode(to encoder: any Swift::Encoder) throws
+  public func hash(into hasher: inout Swift::Hasher)
+  public var hashValue: Swift::Int {
+    get
+  }
+  public init(from decoder: any Swift::Decoder) throws
+}
+extension IMMediaKit::IMMediaItem {
+  public var isVideo: Swift::Bool {
+    get
+  }
+  public var isImage: Swift::Bool {
+    get
+  }
+  public var needsProcess: Swift::Bool {
+    get
+  }
+  public var isHorizonCorrected: Swift::Bool {
+    get
+  }
+  public var thumbnailSourcePath: Swift::String {
+    get
+  }
+  public var pixelSize: CoreFoundation::CGSize? {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class IMMediaLogger {
+  public static let shared: IMMediaKit::IMMediaLogger
+  final public var sink: ((Swift::String) -> Swift::Void)?
+  final public var isEnabled: Swift::Bool
+  final public func info(_ msg: @autoclosure () -> Swift::String)
+  final public func warn(_ msg: @autoclosure () -> Swift::String)
+  final public func error(_ msg: @autoclosure () -> Swift::String)
+  final public func debug(_ msg: @autoclosure () -> Swift::String)
+  @objc deinit
+}
+public struct IMMediaQuery : Swift::Equatable, Swift::Sendable {
+  public enum Order : Swift::String, Swift::Sendable {
+    case createdAtDesc, createdAtAsc
+    public init?(rawValue: Swift::String)
+    public typealias RawValue = Swift::String
+    public var rawValue: Swift::String {
+      get
+    }
+  }
+  public var types: Swift::Set<IMMediaKit::IMMediaType>?
+  public var order: IMMediaKit::IMMediaQuery.IMMediaKit::Order
+  public var dateRange: Swift::ClosedRange<Foundation::Date>?
+  public var source: Swift::String?
+  public var offset: Swift::Int
+  public var limit: Swift::Int
+  public init(types: Swift::Set<IMMediaKit::IMMediaType>? = nil, order: IMMediaKit::IMMediaQuery.IMMediaKit::Order = .createdAtDesc, dateRange: Swift::ClosedRange<Foundation::Date>? = nil, source: Swift::String? = nil, offset: Swift::Int = 0, limit: Swift::Int = 50)
+  public static let allFirstPage: IMMediaKit::IMMediaQuery
+  public static func == (a: IMMediaKit::IMMediaQuery, b: IMMediaKit::IMMediaQuery) -> Swift::Bool
+}
+public struct IMMediaGroup : Swift::Equatable, Swift::Sendable {
+  public let anchor: Foundation::Date
+  public let key: IMMediaKit::IMMediaGroup.IMMediaKit::GroupKey
+  public let items: [IMMediaKit::IMMediaItem]
+  public enum GroupKey : Swift::String, Swift::Sendable {
+    case today, yesterday, thisWeek, thisMonth, earlier
+    public init?(rawValue: Swift::String)
+    public typealias RawValue = Swift::String
+    public var rawValue: Swift::String {
+      get
+    }
+  }
+  public static func == (a: IMMediaKit::IMMediaGroup, b: IMMediaKit::IMMediaGroup) -> Swift::Bool
+}
+@_hasMissingDesignatedInitializers final public class IMMediaSDK {
+  public static let shared: IMMediaKit::IMMediaSDK
+  final public func start(configuration: IMMediaKit::IMMediaConfiguration = .default) throws
+  final public func configure(userID: Swift::String)
+  final public func flush()
+  final public func importFile(at url: Foundation::URL, createdAt: Foundation::Date? = nil, move: Swift::Bool = false, source: Swift::String? = nil, accelData: Foundation::Data? = nil, eisText: Foundation::URL? = nil, pendingProcess: Swift::Bool = false, completion: @escaping (Swift::Result<IMMediaKit::IMMediaItem, IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func importImage(_ image: UIKit::UIImage, createdAt: Foundation::Date? = nil, source: Swift::String? = nil, accelData: Foundation::Data? = nil, completion: @escaping (Swift::Result<IMMediaKit::IMMediaItem, IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func importBatch(urls: [Foundation::URL], progress: ((Swift::Int, Swift::Int) -> Swift::Void)? = nil, completion: @escaping (Swift::Result<[IMMediaKit::IMMediaItem], IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func delete(id: Swift::String, completion: @escaping (Swift::Result<Swift::Void, IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func deleteBatch(ids: [Swift::String], completion: @escaping (Swift::Result<Swift::Void, IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func replaceMediaFile(id: Swift::String, withFileAt url: Foundation::URL, move: Swift::Bool = true, clearpendingProcess: Swift::Bool = true, horizonCorrected: Swift::Bool? = nil, completion: @escaping (Swift::Result<IMMediaKit::IMMediaItem, IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func markProcessFinished(id: Swift::String, completion: @escaping (Swift::Result<IMMediaKit::IMMediaItem, IMMediaKit::IMMediaError>) -> Swift::Void)
+  final public func itemsNeedingProcess() -> [IMMediaKit::IMMediaItem]
+  final public func fetch(query q: IMMediaKit::IMMediaQuery = .allFirstPage) -> [IMMediaKit::IMMediaItem]
+  final public func fetchGrouped(query q: IMMediaKit::IMMediaQuery = .allFirstPage) -> [IMMediaKit::IMMediaGroup]
+  final public func get(id: Swift::String) -> IMMediaKit::IMMediaItem?
+  final public func count(types: Swift::Set<IMMediaKit::IMMediaType>? = nil) -> Swift::Int
+  final public func distinctSources() -> Swift::Set<Swift::String>
+  @discardableResult
+  final public func loadImage(_ request: IMMediaKit::IMImageRequest, completion: @escaping (UIKit::UIImage?) -> Swift::Void) -> IMMediaKit::IMImageRequestToken
+  final public func cachedImage(for request: IMMediaKit::IMImageRequest) -> UIKit::UIImage?
+  final public var events: Combine::AnyPublisher<IMMediaKit::IMMediaEvent, Swift::Never> {
+    get
+  }
+  @discardableResult
+  final public func subscribe(_ handler: @escaping (IMMediaKit::IMMediaEvent) -> Swift::Void) -> IMMediaKit::IMMediaEventToken
+  final public func reset(completion: @escaping () -> Swift::Void)
+  @objc deinit
+}
+public enum IMVideoCoverGenerator {
+  public static func copyFrame(videoURL: Foundation::URL, at seconds: Foundation::TimeInterval, maxSize: CoreFoundation::CGSize?) throws -> CoreGraphics::CGImage
+}
+extension IMMediaKit::IMImageRequest.IMMediaKit::Priority : Swift::Equatable {}
+extension IMMediaKit::IMImageRequest.IMMediaKit::Priority : Swift::Hashable {}
+extension IMMediaKit::IMImageRequest.IMMediaKit::Priority : Swift::RawRepresentable {}
+extension IMMediaKit::IMLocalMediaKind : Swift::Equatable {}
+extension IMMediaKit::IMLocalMediaKind : Swift::Hashable {}
+extension IMMediaKit::IMLocalMediaKind : Swift::RawRepresentable {}
+extension IMMediaKit::IMMediaType : Swift::Hashable {}
+extension IMMediaKit::IMMediaType : Swift::RawRepresentable {}
+extension IMMediaKit::IMMediaQuery.IMMediaKit::Order : Swift::Equatable {}
+extension IMMediaKit::IMMediaQuery.IMMediaKit::Order : Swift::Hashable {}
+extension IMMediaKit::IMMediaQuery.IMMediaKit::Order : Swift::RawRepresentable {}
+extension IMMediaKit::IMMediaGroup.IMMediaKit::GroupKey : Swift::Equatable {}
+extension IMMediaKit::IMMediaGroup.IMMediaKit::GroupKey : Swift::Hashable {}
+extension IMMediaKit::IMMediaGroup.IMMediaKit::GroupKey : Swift::RawRepresentable {}

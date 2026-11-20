@@ -1,0 +1,10 @@
+framework module IMMediaKit {
+  umbrella header "IMMediaKit.h"
+  export *
+
+  module * { export * }
+}
+
+module IMMediaKit.Swift {
+  header "IMMediaKit-Swift.h"
+}
